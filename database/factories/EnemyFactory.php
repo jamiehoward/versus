@@ -9,10 +9,10 @@ $factory->define(App\Models\Enemy::class, function (Faker $faker) {
 
     return [
         'name' => $faker->name,
-        'hp_multiplier' => rand(1,2),
+        'hp_multiplier' => 1,
         'attack_name' => $attacks->random(),
-        'attack_multiplier' => rand(1,2),
+        'attack_multiplier' => 1,
         'heal_name' => $heals->random(),
-        'heal_multiplier' => rand(1,2)
+        'heal_multiplier' => 1
     ];
 });

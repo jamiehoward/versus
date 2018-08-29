@@ -22,6 +22,7 @@ class CreateHeroesTable extends Migration
             $table->integer('attack_points')->default(1);
             $table->string('heal_name');
             $table->integer('heal_points')->default(1);
+            $table->integer('victories')->default(0);
             $table->timestamps();
         });
     }

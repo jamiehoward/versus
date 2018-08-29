@@ -40,16 +40,16 @@ class Play extends Command
     public function startMenu($message = null)
     {
         $selection = $this->menu('Start menu' . $message, [
-            'Create a new hero',
             'Select existing hero',
+            'Create a new hero',
         ])->open();
 
         switch ($selection) {
             case 0:
-                $this->createHero();
+                $this->selectHero();
                 break;
             case 1:
-                $this->selectHero();
+                $this->createHero();
                 break;
         }
     }
@@ -79,6 +79,8 @@ class Play extends Command
         $this->hero = $heroes[$selection];
 
         $this->actionMenu();
+
+        exit();
     }
 
     public function actionMenu()
@@ -87,7 +89,8 @@ class Play extends Command
             $this->selectHero();
         }
 
-        $selection = $this->menu("Playing as {$this->hero->name}", [
+        $this->hero->resetHP();
+        $selection = $this->menu("Playing as {$this->hero->getInfoLine()}", [
             'Enter combat zone',
             'Edit hero',
         ])->open();
@@ -99,7 +102,11 @@ class Play extends Command
             case 1:
                 $this->editHero();
                 break;
+            default:
+                exit();
         }
+
+        exit();
     }
 
     public function combatZone()
@@ -140,7 +147,7 @@ class Play extends Command
 
                     // Don't let the hero go above their max
                     if ($this->hero->currentHP > $this->hero->hp) {
-                        $this->hero->currentHP = $this->hero->hp;
+                        $this->hero->resetHP();
                     }
                 }
             // The hero failed
@@ -153,11 +160,68 @@ class Play extends Command
             $this->line('------------------------------------------------------------------');
         }
 
+        $this->completeBattle();
+    }
+
+    public function completeBattle()
+    {
+
         if ($this->hero->currentHP > 0) {
-            $this->info('You won!');
+            $this->hero->resetHP();
+            $this->hero->increaseVictories();
+
+            if ($this->hero->canLevelUp()) {
+                $selection = $this->menu('You won!', [
+                    'Level up!'
+                ])
+                ->disableDefaultItems()
+                ->open();
+                $this->levelUp();
+            } else {
+                $selection = $this->menu('You won!', [])->open();
+                $this->actionMenu();
+            }
         } else {
-            $this->error('You lost!');
+            $this->hero->resetHP();
+            $this->hero->decreaseVictories();
+            $selection = $this->menu('You lost!', [
+                'Keep playing'
+            ])
+            ->addStaticItem('Penalty: -1 XP point')
+            ->open();
+
+            if ($selection == 0) {
+                $this->actionMenu();
+            }
         }
+    }
+
+    public function levelUp()
+    {
+        $selection = $this->menu("Level up! {$this->hero->getInfoLine()}", [
+            'Add 1 point to HP',
+            "Add 1 point to {$this->hero->attack_name} (ATK)",
+            "Add 1 point to {$this->hero->heal_name} (HL)",
+        ])
+        ->disableDefaultItems()
+        ->open();
+
+        switch ($selection) {
+            case 0:
+                $this->hero->hp++;
+                break;
+            case 1:
+                $this->hero->attack_points++;
+                break;
+            case 2:
+                $this->hero->heal_points++;
+        }
+
+        $this->hero->level++;
+        $this->hero->victories = 0;
+        $this->hero->save();
+
+        $this->actionMenu();
     }
 
     /**
