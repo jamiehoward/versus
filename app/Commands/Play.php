@@ -44,15 +44,15 @@ class Play extends Command
 
         switch ($selection) {
             case 0:
-                $this->createCharacter();
+                $this->createHero();
                 break;
             case 1:
-                $this->selectCharacter();
+                $this->selectHero();
                 break;
         }
     }
 
-    public function createCharacter()
+    public function createHero()
     {
         $hero = new Hero;
         $this->info('Create your hero!');
@@ -65,18 +65,44 @@ class Play extends Command
         $this->startMenu(' - Hero saved!');
     }
 
-    public function selectCharacter()
+    public function selectHero()
     {
         $heroes = Hero::get();
         $options = $heroes->map(function($hero) {
             return $hero->name . " ({$hero->level})";
         })->all();
 
-        $selection = $this->menu('Select your character', $options)->open();
+        $selection = $this->menu('Select your hero', $options)->open();
 
         $this->hero = $heroes[$selection];
 
-        $this->info("You selected {$this->hero->name}!");
+        $this->actionMenu();
+    }
+
+    public function actionMenu()
+    {
+        if (!$this->hero) {
+            $this->selectHero();
+        }
+
+        $selection = $this->menu("Playing as {$this->hero->name}", [
+            'Enter combat zone',
+            'Edit hero',
+        ])->open();
+
+        switch ($selection) {
+            case 0:
+                $this->combatZone();
+                break;
+            case 1:
+                $this->editHero();
+                break;
+        }
+    }
+
+    public function combatZone()
+    {
+        $enemy = $this->getRandom
     }
 
     /**
