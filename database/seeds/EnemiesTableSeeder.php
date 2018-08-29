@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Hero;
+use App\Models\Enemy;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class HeroesTableSeeder extends Seeder
+class EnemiesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,8 +13,8 @@ class HeroesTableSeeder extends Seeder
      */
     public function run()
     {
-    	DB::table('heroes')->truncate();
+    	DB::table('enemies')->truncate();
 
-        factory(Hero::class, 5)->create();
+        factory(Enemy::class, 25)->create();
     }
 }
