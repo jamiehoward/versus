@@ -9,7 +9,6 @@ $factory->define(App\Models\Hero::class, function (Faker $faker) {
 
     return [
         'name' => $faker->name,
-        'hp' => 5,
         'level' => 1,
         'attack_name' => $attacks->random(),
         'attack_points' => 1,

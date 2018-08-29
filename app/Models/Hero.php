@@ -6,12 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Hero extends Model
 {
-	public $fillable = ['name', 'attack_name', 'heal_name', 'attack_points', 'heal_points', 'victories', 'hp'];
+	public $fillable = ['name', 'attack_name', 'heal_name', 'attack_points', 'heal_points', 'victories', 'current_hp', 'max_hp'];
 
     public function getInfoLine()
     {
-    	$hp = (isset($this->currentHP)) ? $this->currentHP : $this->hp;
-    	return "{$this->name} (LVL: {$this->level} / HP: $hp / ATK: {$this->attack_points} / HL: {$this->heal_points} / XP: {$this->victories})";
+    	return "{$this->name} (LVL: {$this->level} / HP: ({$this->current_hp}/{$this->max_hp}) / ATK: {$this->attack_points} / HL: {$this->heal_points} / XP: {$this->victories})";
     }
 
     public function battles()
@@ -35,7 +34,8 @@ class Hero extends Model
 
     public function resetHP()
     {
-    	unset($this->currentHP);
+    	$this->current_hp = $this->max_hp;
+        $this->save();
     }
 
     public function canLevelUp()

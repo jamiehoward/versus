@@ -97,7 +97,6 @@ class Play extends Command
             $this->selectHero();
         }
 
-        $this->hero->resetHP();
         $selection = $this->menu("Playing as {$this->hero->getInfoLine()}", [
             'Enter combat zone',
             'Edit hero',
@@ -151,13 +150,12 @@ class Play extends Command
     {
         $this->enemy = Enemy::get()->random();
 
-        $this->hero->currentHP = $this->hero->hp;
         $this->enemy->setStats($this->hero);
 
         $this->info("You are now fighting {$this->enemy->name}!");
 
         // Keep the battle going until someone dies
-        while ($this->hero->currentHP > 0 && $this->enemy->currentHP > 0) {
+        while ($this->hero->current_hp > 0 && $this->enemy->currentHP > 0) {
 
             $this->info($this->hero->getInfoLine());
             $this->info($this->enemy->getInfoLine());
@@ -189,10 +187,10 @@ class Play extends Command
                     $this->enemy->currentHP -= $this->hero->attack_points;
                 } else {
                     $this->info("Your healing was successful! [+{$this->hero->heal_points}]");
-                    $this->hero->currentHP += $this->hero->heal_points;
+                    $this->hero->current_hp += $this->hero->heal_points;
 
                     // Don't let the hero go above their max
-                    if ($this->hero->currentHP > $this->hero->hp) {
+                    if ($this->hero->current_hp > $this->hero->max_hp) {
                         $this->hero->resetHP();
                     }
                 }
@@ -200,7 +198,7 @@ class Play extends Command
             } else {
                 if ($enemyAction == 'attack') {
                     $this->error("{$this->enemy->name}'s attack was successful! [-{$this->enemy->currentAttack}]");
-                    $this->hero->currentHP -= $this->enemy->currentAttack;
+                    $this->hero->current_hp -= $this->enemy->currentAttack;
                 } else {
                     $this->error("{$this->enemy->name}'s healing was successful! [-{$this->enemy->currentHeal}]");
                     $this->enemy->currentHP += $this->enemy->currentHeal;
@@ -222,8 +220,9 @@ class Play extends Command
     public function completeBattle()
     {
 
-        if ($this->hero->currentHP > 0) {
-            $this->hero->resetHP();
+        $this->hero->save();
+
+        if ($this->hero->current_hp > 0) {
             $this->hero->increaseVictories();
 
             if ($this->hero->canLevelUp()) {
@@ -243,6 +242,7 @@ class Play extends Command
             $selection = $this->menu('You lost!', [
                 'Keep playing'
             ])
+            ->disableDefaultItems()
             ->addStaticItem('Penalty: -1 XP point')
             ->open();
 
@@ -264,7 +264,7 @@ class Play extends Command
 
         switch ($selection) {
             case 0:
-                $this->hero->hp++;
+                $this->hero->max_hp++;
                 break;
             case 1:
                 $this->hero->attack_points++;
@@ -273,6 +273,8 @@ class Play extends Command
                 $this->hero->heal_points++;
         }
 
+        // Refill HP on a level up
+        $this->hero->resetHP();
         $this->hero->level++;
         $this->hero->victories = 0;
         $this->hero->save();

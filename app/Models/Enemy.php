@@ -13,7 +13,7 @@ class Enemy extends Model
 
     public function setStats(Hero $hero)
     {
-        $this->maxHP = ceil($this->hp_multiplier * $hero->hp);
+        $this->maxHP = ceil($this->hp_multiplier * $hero->max_hp);
     	$this->currentHP = $this->getMaxHP();
     	$this->currentAttack = ceil($this->attack_multiplier * $hero->attack_points);
     	$this->currentHeal = ceil($this->heal_multiplier * $hero->heal_points);
