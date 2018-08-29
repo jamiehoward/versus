@@ -15,6 +15,17 @@ class EnemiesTableSeeder extends Seeder
     {
     	DB::table('enemies')->truncate();
 
+        $defaultEnemies = [
+            [
+                'name' => '',
+                'hp_multiplier' => '',
+                'attack_name' => '',
+                'attack_multiplier' => '',
+                'heal_name' => '',
+                'heal_multiplier' => '',
+            ]
+        ];
+
         factory(Enemy::class, 25)->create();
     }
 }

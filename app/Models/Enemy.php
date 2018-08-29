@@ -21,7 +21,7 @@ class Enemy extends Model
 
     public function getInfoLine()
     {
-        return "{$this->name} (HP: {$this->currentHP} / ATK: {$this->currentAttack} / HL: {$this->currentHeal})";
+        return "{$this->name} (HP: ({$this->currentHP}/{$this->getMaxHP()}) / ATK: {$this->currentAttack} / HL: {$this->currentHeal})";
     }
 
     public function getMultiplierLabel()

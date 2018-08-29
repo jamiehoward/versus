@@ -10,7 +10,7 @@ class Hero extends Model
 
     public function getInfoLine()
     {
-    	return "{$this->name} (LVL: {$this->level} / HP: ({$this->current_hp}/{$this->max_hp}) / ATK: {$this->attack_points} / HL: {$this->heal_points} / XP: {$this->victories})";
+    	return "{$this->name} (HP: ({$this->current_hp}/{$this->max_hp}) / ATK: {$this->attack_points} / HL: {$this->heal_points} / LVL: {$this->level} / XP: {$this->victories})";
     }
 
     public function battles()

@@ -42,7 +42,7 @@ class Play extends Command
 
     public function startMenu($message = null)
     {
-        $selection = $this->menu('Start menu' . $message, [
+        $selection = $this->menu('Welcome to VERSUS! A simple RPG that can be played in CLI.' . $message, [
             'Select existing hero',
             'Create a new hero',
             'Quit game'
@@ -214,6 +214,8 @@ class Play extends Command
             $this->line('------------------------------------------------------------------');
         }
 
+        sleep(4);
+
         $this->completeBattle();
     }
 
@@ -226,24 +228,24 @@ class Play extends Command
             $this->hero->increaseVictories();
 
             if ($this->hero->canLevelUp()) {
-                $selection = $this->menu('You won!', [
+                $selection = $this->menu('You won! +1 XP', [
                     'Level up!'
                 ])
                 ->disableDefaultItems()
                 ->open();
                 $this->levelUp();
             } else {
-                $selection = $this->menu('You won!', [])->open();
+                $selection = $this->menu('You won! +1 XP', [])
+                ->open();
                 $this->actionMenu();
             }
         } else {
             $this->hero->resetHP();
             $this->hero->decreaseVictories();
-            $selection = $this->menu('You lost!', [
+            $selection = $this->menu('You lost! -1 XP', [
                 'Keep playing'
             ])
             ->disableDefaultItems()
-            ->addStaticItem('Penalty: -1 XP point')
             ->open();
 
             if ($selection == 0) {
@@ -280,17 +282,5 @@ class Play extends Command
         $this->hero->save();
 
         $this->actionMenu();
-    }
-
-    /**
-     * Define the command's schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
-     *
-     * @return void
-     */
-    public function schedule(Schedule $schedule): void
-    {
-        // $schedule->command(static::class)->everyMinute();
     }
 }
