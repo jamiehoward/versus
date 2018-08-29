@@ -33,7 +33,10 @@ class Play extends Command
      */
     public function handle(): void
     {
-        $this->info('Welcome to Versus!');
+        if (Enemy::count() == 0) {
+            throw new \Exception('Before playing, first manually create or seed enemies.');
+        }
+
         $this->startMenu();
     }
 

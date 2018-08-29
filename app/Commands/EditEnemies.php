@@ -6,7 +6,7 @@ use App\Models\Enemy;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
-class Play extends Command
+class EditEnemies extends Command
 {
     /**
      * The signature of the command.
@@ -31,24 +31,7 @@ class Play extends Command
      */
     public function handle(): void
     {
-        $selection = $this->menu('Main menu', [
-            'Select existing enemy',
-            'Create a new enemy',
-            'Cancel'
-        ])
-        ->disableDefaultItems()
-        ->open();
-
-        switch ($selection) {
-            case 0:
-                $this->selectEnemy();
-                break;
-            case 1:
-                $this->createEnemy();
-                break;
-            default:
-                exit();
-        }
+        $this->selectEnemy();
     }
 
     public function createEnemy()
@@ -59,7 +42,7 @@ class Play extends Command
         $enemy->attack_name = $this->ask('What is the enemy\'s attack called?', 'Attack');
         $enemy->attack_multiplier = $this->ask('What is the enemy\'s attack multiplier?', 1);
         $enemy->heal_name = $this->ask('What is the enemy\'s healing power called?', 'Heal');
-        $enemy->heal_multiplier = $this->ask('What is the enemy\'s attack multiplier?',1 );
+        $enemy->heal_multiplier = $this->ask('What is the enemy\'s healing multiplier?',1 );
 
         $enemy->save();
 
@@ -73,10 +56,14 @@ class Play extends Command
             return "{$enemy->name} " . $enemy->getMultiplierLabel();
         })->all();
 
+        $options[] = '[Create a new enemy]';
+
         $selection = $this->menu('Select your enemy', $options)
         ->open();
 
-        if (!is_null($selection)) { 
+        if ($selection == count($options)-1) {
+            $this->createEnemy();
+        } elseif (!is_null($selection)) { 
             $this->enemy = $enemies[$selection];
 
             $this->editEnemyMenu();
