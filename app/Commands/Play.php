@@ -42,7 +42,10 @@ class Play extends Command
         $selection = $this->menu('Start menu' . $message, [
             'Select existing hero',
             'Create a new hero',
-        ])->open();
+            'Quit game'
+        ])
+        ->disableDefaultItems()
+        ->open();
 
         switch ($selection) {
             case 0:
@@ -51,6 +54,8 @@ class Play extends Command
             case 1:
                 $this->createHero();
                 break;
+            default:
+                exit();
         }
     }
 
@@ -93,7 +98,10 @@ class Play extends Command
         $selection = $this->menu("Playing as {$this->hero->getInfoLine()}", [
             'Enter combat zone',
             'Edit hero',
-        ])->open();
+            'Quit to main menu'
+        ])
+        ->disableDefaultItems()
+        ->open();
 
         switch ($selection) {
             case 0:
@@ -103,10 +111,8 @@ class Play extends Command
                 $this->editHero();
                 break;
             default:
-                exit();
+                $this->startMenu();
         }
-
-        exit();
     }
 
     public function combatZone()
