@@ -79,7 +79,7 @@ class Play extends Command
     {
         $heroes = Hero::get();
         $options = $heroes->map(function($hero) {
-            return $hero->name . " ({$hero->level})";
+            return $hero->name . " (Lvl. {$hero->level})";
         })->all();
 
         $selection = $this->menu('Select your hero', $options)->open();
@@ -176,7 +176,7 @@ class Play extends Command
                 $this->info("{$this->enemy->name} will heal with {$this->enemy->heal_name}");
             }
 
-            $this->confirm('Ready to roll?', true);
+            $this->ask('Let\'s roll!');
 
             $roll = rand(1,6);
 

@@ -36,8 +36,8 @@ class Enemy extends Model
 
     public function getActionDecision()
     {
-        // Always attack if at full health
-        if ($this->currentHP == $this->getMaxHP()) {
+        // Always attack if at full health or on death's door
+        if ($this->currentHP == $this->getMaxHP() || $this->currentHP == 1) {
             return 'attack';
         }
 
