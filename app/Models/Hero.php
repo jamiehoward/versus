@@ -40,6 +40,10 @@ class Hero extends Model
 
     public function canLevelUp()
     {
+        if ($this->level > 10 ) {
+            return false;
+        }
+
     	$victoriesPerLevel = [
     		1 => 2,
     		2 => 3,

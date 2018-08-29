@@ -108,11 +108,40 @@ class Play extends Command
                 $this->combatZone();
                 break;
             case 1:
-                $this->editHero();
+                $this->editHeroMenu();
                 break;
             default:
                 $this->startMenu();
         }
+    }
+
+    public function editHeroMenu()
+    {
+        $selection = $this->menu("Playing as {$this->hero->getInfoLine()}", [
+            "Change hero name",
+            "Change name of attack ({$this->hero->attack_name})",
+            "Change name of healing ({$this->hero->heal_name})",
+            'Back'
+        ])
+        ->disableDefaultItems()
+        ->open();
+
+        switch ($selection) {
+            case 0:
+                $this->hero->name = $this->ask("What do want you hero's name to be?");
+                break;
+            case 1:
+                $this->hero->attack_name = $this->ask("What do want you hero's attack to be called?");
+                break;
+            case 2:
+                $this->hero->heal_name = $this->ask("What do want you hero's healing to be called?");
+                break;
+            default:
+                $this->actionMenu();
+        }
+        
+        $this->hero->save();
+        $this->editHeroMenu();
     }
 
     public function combatZone()
@@ -134,7 +163,15 @@ class Play extends Command
             $actionName = $action . "_name";
 
             $this->info("You will use {$this->hero->$actionName}");
-            $this->info("{$this->enemy->name} will attack with {$this->enemy->attack_name}");
+
+            // Decide on the enemy's action
+            $enemyAction = $this->enemy->getActionDecision();
+
+            if ($enemyAction == 'attack') {
+                $this->info("{$this->enemy->name} will attack with {$this->enemy->attack_name}");
+            } else {
+                $this->info("{$this->enemy->name} will heal with {$this->enemy->heal_name}");
+            }
 
             $this->confirm('Ready to roll?', true);
 
@@ -158,8 +195,18 @@ class Play extends Command
                 }
             // The hero failed
             } else {
-                $this->error("{$this->enemy->name}'s attack was successful! [-{$this->enemy->currentAttack}]");
-                $this->hero->currentHP -= $this->enemy->currentAttack;
+                if ($enemyAction == 'attack') {
+                    $this->error("{$this->enemy->name}'s attack was successful! [-{$this->enemy->currentAttack}]");
+                    $this->hero->currentHP -= $this->enemy->currentAttack;
+                } else {
+                    $this->error("{$this->enemy->name}'s healing was successful! [-{$this->enemy->currentHeal}]");
+                    $this->enemy->currentHP += $this->enemy->currentHeal;
+
+                    // Don't let the enemy go above their max
+                    if ($this->enemy->currentHP > $this->enemy->getMaxHP()) {
+                        $this->enemy->currentHP = $this->enemy->getMaxHP();
+                    }
+                }
             }
 
             $this->line('------------------------------------------------------------------');

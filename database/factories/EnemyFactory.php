@@ -7,12 +7,23 @@ $factory->define(App\Models\Enemy::class, function (Faker $faker) {
 
 	$heals = collect(['Armor Up','Bluff','Clench','Clone','Dash','Daze','Exempt','Fade','Grace','Hug','Intervene','Mislead','Piety','Reincarnate','Shift','Shout','Heal','Repair','Mend','Clean','Walk it off', 'Rest', 'Hide', 'Restore', 'Regenerate', 'Cloak', 'Salve', 'Ointment', 'Annoint', 'Rejuvenate', 'Quench', 'Bathe']);
 
+    // Harder
+    // return [
+    //     'name' => $faker->name,
+    //     'hp_multiplier' => rand(0,2) + rand(0,10)/10,
+    //     'attack_name' => $attacks->random(),
+    //     'attack_multiplier' => rand(0,2) + rand(0,10)/10,
+    //     'heal_name' => $heals->random(),
+    //     'heal_multiplier' => rand(0,2) + rand(0,10)/10
+    // ];
+
+    // Easy
     return [
         'name' => $faker->name,
-        'hp_multiplier' => 1,
+        'hp_multiplier' => rand(1,10)/10,
         'attack_name' => $attacks->random(),
-        'attack_multiplier' => 1,
+        'attack_multiplier' => rand(1,10)/10,
         'heal_name' => $heals->random(),
-        'heal_multiplier' => 1
+        'heal_multiplier' => rand(1,10)/10
     ];
 });
